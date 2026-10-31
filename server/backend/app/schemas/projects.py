@@ -47,6 +47,7 @@ class Project(BaseModel):
     branch: str | None = None
     commit_hash: str | None = None
     commit_timestamp: datetime | None = None
+    storage_objects: list[str] = Field(default_factory=list)
 
 
 class ProjectList(BaseModel):

@@ -22,6 +22,7 @@ from app.schemas.projects import (
     ProjectSourceFile,
 )
 from app.services.inventory_service import build_inventory
+from app.services.storage_service import StorageService
 
 _SAFE_NAME = re.compile(r"[^A-Za-z0-9._-]+")
 _ALLOWED_UPLOAD_EXTENSIONS = {
@@ -65,6 +66,9 @@ def _manifest(project_dir: Path) -> Project:
 
 
 class ProjectService:
+    def __init__(self) -> None:
+        self.storage = StorageService()
+
     async def github_repositories(
         self, username: str, token: str | None = None
     ) -> GitHubRepositoryList:
@@ -142,14 +146,15 @@ class ProjectService:
             project_dir.mkdir(parents=True, exist_ok=False)
             source_dir.mkdir()
             self._extract_tar(archive_response.content, source_dir)
-            return self._finalize(
-                project_id, request.project_name, "github", project_dir, source_dir,
+            project = self._finalize(
+                project_id, request.project_name, "github", project_dir, project_dir,
                 source_reference=repository.html_url,
                 repository_url=repository.html_url, owner=request.username,
                 repository_name=request.repository, branch=branch,
                 commit_hash=commit["sha"],
                 commit_timestamp=commit.get("commit", {}).get("committer", {}).get("date"),
             )
+            return await self.storage.mirror_project(project, project_dir)
         except Exception:
             shutil.rmtree(project_dir, ignore_errors=True)
             raise
@@ -194,7 +199,10 @@ class ProjectService:
                 if target.exists():
                     target = target.with_name(f"{uuid.uuid4().hex[:8]}-{target.name}")
                 target.write_bytes(content)
-            return self._finalize(project_id, project_name, "upload", project_dir, project_dir)
+            project = self._finalize(
+                project_id, project_name, "upload", project_dir, project_dir
+            )
+            return await self.storage.mirror_project(project, project_dir)
         except Exception:
             shutil.rmtree(project_dir, ignore_errors=True)
             raise
