@@ -38,8 +38,8 @@ class AIServiceSettings(BaseSettings):
 
     # Primary LLM Model configuration
     # Optimized for Groq (llama-3.3-70b-versatile for reasoning, llama-3.1-8b-instant for fast tasks)
-    llm_model: str = "groq/llama-3.3-70b-versatile"
-    llm_fast_model: str = "groq/llama-3.1-8b-instant"
+    llm_model: str = os.getenv("MOD_LLM_MODEL", "groq/openai/gpt-oss-120b")
+    llm_fast_model: str = os.getenv("MOD_LLM_FAST_MODEL", "groq/openai/gpt-oss-20b")
     llm_temperature: float = 0.1
     llm_max_tokens: int = 4096
 

@@ -11,6 +11,21 @@ from app.core.config import settings
 logger = logging.getLogger(__name__)
 
 
+def _groq_model(model_type: str) -> str:
+    configured = (
+        os.getenv("MOD_LLM_FAST_MODEL")
+        if model_type == "fast"
+        else os.getenv("MOD_LLM_MODEL")
+    )
+    model = configured or (
+        "groq/openai/gpt-oss-20b"
+        if model_type == "fast"
+        else "groq/openai/gpt-oss-120b"
+    )
+    model = model.removeprefix("groq/").removeprefix("openai/")
+    return f"openai/{model}"
+
+
 def get_llm(model_type: str = "default") -> LLM:
     """Return a configured CrewAI LLM instance based on available environment variables.
 
@@ -24,11 +39,8 @@ def get_llm(model_type: str = "default") -> LLM:
     # Priority 1: Groq (ultra fast inference)
     if groq_key:
         os.environ["GROQ_API_KEY"] = groq_key
-        # Active Groq models: openai/gpt-oss-20b (fast, agile) and openai/gpt-oss-120b (deep)
-        if model_type in ("deep", "reasoning"):
-            groq_model = "openai/openai/gpt-oss-120b"
-        else:
-            groq_model = "openai/openai/gpt-oss-20b"
+        # Groq exposes these models through its OpenAI-compatible API.
+        groq_model = _groq_model("default" if model_type not in ("deep", "reasoning") else "deep")
 
         return LLM(
             model=groq_model,
