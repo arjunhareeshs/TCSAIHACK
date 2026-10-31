@@ -1,9 +1,47 @@
+<<<<<<< HEAD
 # Logs
 logs
+=======
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+
+# Testing & Coverage
+.coverage
+.pytest_cache/
+coverage/
+
+# Build & Distribution
+dist/
+build/
+*.egg-info/
+
+# Environment & Local Configuration
+.env
+.env.local
+.env.*.local
+*.local
+
+# Logs
+logs/
+>>>>>>> d7aa9cdb6383e44e8cb6e5e96310fbeda7a3c3a6
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+<<<<<<< HEAD
 pnpm-debug.log*
 lerna-debug.log*
 
@@ -66,4 +104,12 @@ test-results/
 playwright-report/
 blob-report/
 playwright/.cache/
+=======
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+>>>>>>> d7aa9cdb6383e44e8cb6e5e96310fbeda7a3c3a6
 

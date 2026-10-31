@@ -1,0 +1,1 @@
+# AI service container image definition.
