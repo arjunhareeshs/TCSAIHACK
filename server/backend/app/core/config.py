@@ -15,6 +15,10 @@ class Settings(BaseModel):
     max_archive_files: int = 10_000
     max_archive_uncompressed_bytes: int = 100 * 1024 * 1024
     github_token: str | None = Field(default_factory=lambda: os.getenv("GITHUB_TOKEN"))
+    database_url: str | None = Field(
+        default_factory=lambda: os.getenv("SUPABASE_DATABASE_URL")
+        or os.getenv("DATABASE_URL")
+    )
     supabase_url: str | None = Field(default_factory=lambda: os.getenv("SUPABASE_URL"))
     supabase_service_role_key: str | None = Field(
         default_factory=lambda: os.getenv("SUPABASE_SERVICE_ROLE_KEY")

@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.router import router
 from app.core.config import settings
+from app.db.session import DatabaseNotConfiguredError, check_connection
 
 
 @asynccontextmanager
@@ -28,4 +29,15 @@ app.include_router(router, prefix=settings.api_prefix)
 
 @app.get("/health", tags=["system"])
 async def health() -> dict[str, str]:
+    return {"status": "ok"}
+
+
+@app.get("/health/db", tags=["system"])
+async def database_health() -> dict[str, str]:
+    try:
+        check_connection()
+    except DatabaseNotConfiguredError:
+        return {"status": "not_configured"}
+    except Exception:
+        return {"status": "unavailable"}
     return {"status": "ok"}
