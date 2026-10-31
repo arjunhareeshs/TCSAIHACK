@@ -221,6 +221,20 @@ class ProjectService:
         project_dir = self._project_dir(project_id)
         return _manifest(project_dir)
 
+    def update_project(self, project_id: str, name: str | None = None) -> Project:
+        project_dir = self._project_dir(project_id)
+        project = _manifest(project_dir)
+        if name is not None:
+            project.name = _safe_name(name, "legacy-project")
+            (project_dir / "metadata.json").write_text(
+                project.model_dump_json(indent=2), encoding="utf-8"
+            )
+        return project
+
+    def delete_project(self, project_id: str) -> None:
+        project_dir = self._project_dir(project_id)
+        shutil.rmtree(project_dir)
+
     def get_inventory(self, project_id: str) -> list[InventoryEntry]:
         return self.get_project(project_id).inventory
 

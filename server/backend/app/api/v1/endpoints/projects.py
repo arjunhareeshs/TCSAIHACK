@@ -1,6 +1,13 @@
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
+from fastapi.responses import Response
 
-from app.schemas.projects import InventoryEntry, Project, ProjectList, ProjectSource
+from app.schemas.projects import (
+    InventoryEntry,
+    Project,
+    ProjectList,
+    ProjectSource,
+    ProjectUpdate,
+)
 from app.services.project_service import ProjectService, ProjectServiceError
 
 router = APIRouter()
@@ -35,6 +42,23 @@ async def upload_evidence(
 async def get_project(project_id: str) -> Project:
     try:
         return service.get_project(project_id)
+    except ProjectServiceError as error:
+        raise _error(error) from error
+
+
+@router.patch("/{project_id}", response_model=Project)
+async def update_project(project_id: str, update: ProjectUpdate) -> Project:
+    try:
+        return service.update_project(project_id, update.name)
+    except ProjectServiceError as error:
+        raise _error(error) from error
+
+
+@router.delete("/{project_id}", status_code=204)
+async def delete_project(project_id: str) -> Response:
+    try:
+        service.delete_project(project_id)
+        return Response(status_code=204)
     except ProjectServiceError as error:
         raise _error(error) from error
 

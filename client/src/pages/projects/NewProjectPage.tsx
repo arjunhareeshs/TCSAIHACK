@@ -20,10 +20,12 @@ import {
   Loader2,
 } from 'lucide-react';
 import { apiClient } from '../../shared/api/client';
+import { API_BASE_URL, ENDPOINTS } from '../../shared/api/endpoints';
 import {
   ProjectSourceFile,
   SupportingEvidenceFile,
   AnalysisSettings,
+  Project,
 } from '../../shared/api/types';
 
 export const NewProjectPage: React.FC = () => {
@@ -43,6 +45,7 @@ export const NewProjectPage: React.FC = () => {
   const [uploadMethod, setUploadMethod] = useState<'zip' | 'github' | 'files'>('zip');
   const [githubUrl, setGithubUrl] = useState('');
   const [githubBranch, setGithubBranch] = useState('main');
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   // Uploaded Files State
   const [sourceFiles, setSourceFiles] = useState<ProjectSourceFile[]>([]);
@@ -78,6 +81,7 @@ export const NewProjectPage: React.FC = () => {
 
   // Process ZIP File using JSZip
   const handleZipUpload = async (file: File) => {
+    setSelectedFiles((prev) => [...prev.filter((item) => item.name !== file.name), file]);
     try {
       setIsProcessingFiles(true);
       setUploadError(null);
@@ -137,6 +141,7 @@ export const NewProjectPage: React.FC = () => {
 
   // Process Direct File Uploads
   const handleFilesUpload = async (fileList: FileList) => {
+    setSelectedFiles((prev) => [...prev, ...Array.from(fileList)]);
     setIsProcessingFiles(true);
     setUploadError(null);
     const newFiles: ProjectSourceFile[] = [];
@@ -173,6 +178,7 @@ export const NewProjectPage: React.FC = () => {
 
   // Process Supporting Evidence Files
   const handleEvidenceUpload = async (fileList: FileList) => {
+    setSelectedFiles((prev) => [...prev, ...Array.from(fileList)]);
     const newEv: SupportingEvidenceFile[] = [];
 
     for (let i = 0; i < fileList.length; i++) {
@@ -211,7 +217,7 @@ export const NewProjectPage: React.FC = () => {
     setSupportingEvidence((prev) => [...prev, ...newEv]);
   };
 
-  const handleGitHubImport = () => {
+  const handleGitHubImport = async () => {
     if (!githubUrl.trim()) return;
     setIsProcessingFiles(true);
     setUploadError(null);
@@ -220,7 +226,11 @@ export const NewProjectPage: React.FC = () => {
     const parts = githubUrl.trim().replace(/\.git$/, '').split('/');
     const repoName = parts[parts.length - 1] || 'ImportedLegacyRepo';
 
-    setTimeout(() => {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}${ENDPOINTS.GITHUB.REPOSITORIES(parts[parts.length - 2])}`,
+      );
+      if (!response.ok) throw new Error('Unable to load GitHub repositories.');
       setName(repoName);
       setSourceFiles([
         { name: `${repoName}Core.java`, path: `src/main/java/${repoName}Core.java`, size: 14200, type: 'java', linesCount: 380 },
@@ -228,8 +238,11 @@ export const NewProjectPage: React.FC = () => {
         { name: 'pom.xml', path: 'pom.xml', size: 3400, type: 'xml', linesCount: 95 },
       ]);
       setDetectedTechs(['Java', 'Maven', 'Spring 3.x']);
+    } catch (error) {
+      setUploadError(error instanceof Error ? error.message : 'GitHub lookup failed.');
+    } finally {
       setIsProcessingFiles(false);
-    }, 700);
+    }
   };
 
   // Submission & Pipeline Run
@@ -244,37 +257,21 @@ export const NewProjectPage: React.FC = () => {
       setAnalysisStep('Registering project and persisting source artifacts...');
       setAnalysisProgress(5);
 
-      const totalLines = sourceFiles.reduce((acc, f) => acc + (f.linesCount || 50), 0) || 1450;
-
-      const created = await apiClient.createProject({
-        name: name.trim(),
-        description: description.trim() || `Modernization analysis for ${name.trim()} legacy codebase.`,
-        type,
-        language,
-        database,
-        status: 'In Progress',
-        filesCount: sourceFiles.length || 1,
-        linesOfCode: totalLines,
-        businessRulesCount: 0,
-        dependenciesCount: 0,
-        technicalDebtIssuesCount: 0,
-        criticalRisksCount: 0,
-        testCasesCount: 0,
-        detectedTechnologies: detectedTechs.length > 0 ? detectedTechs : [language, database],
-        sourceFiles: sourceFiles.length > 0 ? sourceFiles : [
-          { name: `${name.replace(/\s+/g, '')}Service.java`, path: `src/${name}Service.java`, size: 12000, type: 'java', linesCount: 350 },
-        ],
-        supportingEvidence,
-        analysisSettings: settings,
-      });
-
-      // Run live analysis pipeline
-      await apiClient.runAnalysis(created.id, (percent, stepName) => {
-        setAnalysisProgress(percent);
-        setAnalysisStep(stepName);
-      });
-
-      // Complete & navigate to project overview
+      let created: Project;
+      if (uploadMethod === 'github') {
+        const parts = githubUrl.trim().replace(/\.git$/, '').split('/').filter(Boolean);
+        if (parts.length < 2 || parts[0] !== 'https:' && parts[0] !== 'http:') {
+          throw new Error('Enter a valid GitHub repository URL.');
+        }
+        created = await apiClient.cloneGitHubProject(
+          name.trim(),
+          parts[parts.length - 2],
+          parts[parts.length - 1],
+          githubBranch.trim() || undefined,
+        );
+      } else {
+        created = await apiClient.uploadProject(name.trim(), selectedFiles);
+      }
       navigate(`/projects/${created.id}`);
     } catch (err: any) {
       console.error('Failed to create and analyse project:', err);

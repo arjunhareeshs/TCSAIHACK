@@ -21,6 +21,9 @@ class Settings(BaseModel):
     )
     source_bucket: str = "legacy-source-code"
     evidence_bucket: str = "legacy-evidence"
+    frontend_origin: str = Field(
+        default_factory=lambda: os.getenv("FRONTEND_ORIGIN", "http://localhost:5173")
+    )
 
 
 settings = Settings()

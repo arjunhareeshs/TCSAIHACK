@@ -54,6 +54,11 @@ class ProjectList(BaseModel):
     projects: list[Project] = Field(default_factory=list)
 
 
+class ProjectUpdate(BaseModel):
+    name: str | None = Field(default=None, min_length=1, max_length=100)
+    model_config = {"extra": "ignore"}
+
+
 class ProjectSourceFile(BaseModel):
     relative_path: str
     category: Literal["source", "documentation", "configuration", "binary", "generated"]
