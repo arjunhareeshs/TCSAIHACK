@@ -1,0 +1,27 @@
+research_technology_task:
+  description: >
+    1. Read verified package versions from 'stack' document using `read_document`.
+    2. Check latest versions and deprecations using `get_package_versions`.
+    3. Document recommended runtime upgrade paths and breaking API migrations with `record_research`.
+    4. Write findings into 'research' using `write_section`.
+  expected_output: >
+    Verified technology upgrade analysis with versions and dates.
+  agent: technology_researcher
+
+research_security_task:
+  description: >
+    1. Check detected dependencies for known vulnerabilities using `check_package_vulnerabilities`.
+    2. Evaluate severity scores, CVSS vectors, and recommended patches.
+    3. Record security findings and write the assessment into 'security_assessment' using `write_section`.
+  expected_output: >
+    Comprehensive security_assessment.md detailing detected vulnerabilities and recommended remediation.
+  agent: security_researcher
+
+research_architecture_task:
+  description: >
+    1. Formulate modern target patterns (strangler fig, modular monolith, event-driven) tailored to the project.
+    2. Record architectural patterns using `record_research`.
+    3. Write the architecture research summary into 'research' using `write_section`.
+  expected_output: >
+    Architectural options and decomposition patterns recorded in research.md.
+  agent: architecture_researcher

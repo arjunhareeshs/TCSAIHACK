@@ -1,0 +1,20 @@
+verify_investigation_gate1_task:
+  description: >
+    1. Check file read coverage across relevant files using `get_coverage_report`. Ensure at least 60% coverage.
+    2. Audit all citations using `validate_citations` to verify lines exist in actual source files.
+    3. If coverage or citations fail, dispatch targeted rework using `request_reinvestigation`.
+    4. Write Gate 1 evaluation into 'verification' using `write_section`.
+  expected_output: >
+    Verification report assessing Gate 1 status (coverage ratio, valid citations, rework tasks).
+  agent: modernization_supervisor
+
+verify_consistency_gate2_task:
+  description: >
+    1. Compare findings across layers using `compare_findings`.
+    2. Ensure every frontend API call is matched to a backend route or marked unmatched.
+    3. Ensure every table has identified code queries or is marked orphan.
+    4. Check that all business rules have 10 required fields and citations.
+    5. Write Gate 2 status into 'verification' using `write_section`.
+  expected_output: >
+    Gate 2 consistency audit certifying that cross-layer mappings and business rules are verified.
+  agent: modernization_supervisor

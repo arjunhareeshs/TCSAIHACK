@@ -1,0 +1,26 @@
+extract_business_rules_task:
+  description: >
+    1. Scan functions with complex branches and domain terms using `find_symbol`, `search_code`, and `read_file`.
+    2. Trace business rules end-to-end: input validation -> business computation -> database write.
+    3. For every discovered rule, cite the code lines using `cite_code` and record the rule using `record_business_rule`
+       with all 10 required fields (rule_id_code, domain, title, description, trigger, inputs, logic, outputs, dependencies, criticality).
+    4. Write the business logic documentation into 'business' using `write_section`.
+  expected_output: >
+    Complete business_logic.md and recorded entries in the business rule catalogue with 100% evidence citations.
+  agent: business_rule_extractor
+
+adjudicate_obsolescence_task:
+  description: >
+    1. Query all symbols flagged with low liveness or uncalled status using `get_liveness_report`.
+    2. For each candidate symbol, perform all 6 required checks to try to DISPROVE obsolescence:
+       - Exact name search across strings, configs, and SQL (`search_code`)
+       - Dynamic markers and reflection check (`get_dynamic_markers`)
+       - Scheduled jobs and crontabs (`search_code`)
+       - Linked incidents and tickets (`get_records_for_component`)
+       - Git history and blame for bug fix comments (`git_file_history`, `git_blame_range`)
+       - Function body reading to check for business formulas (`read_file`)
+    3. Submit formal verdict using `submit_liveness_verdict` with verified evidence_ids and checks_done list.
+    4. Compile the human review items into 'review_queue' using `write_section`.
+  expected_output: >
+    Formal verdicts for all low-liveness symbols in review_queue.md, with no symbol marked obsolete without exhaustive checks.
+  agent: obsolescence_adjudicator

@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './login.css';
 
 const svgProps = {
@@ -47,6 +48,7 @@ const GoogleIcon = () => (
 );
 
 export default function LoginPage() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -54,8 +56,8 @@ export default function LoginPage() {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    // TODO: wire up to features/authentication
     console.log({ email, remember });
+    navigate('/');
   };
 
   return (
@@ -66,9 +68,9 @@ export default function LoginPage() {
 
         <section className="login__panel">
           <form className="login__form-wrap" onSubmit={handleSubmit}>
-            <div className="login__logo">sh</div>
-            <h1 className="login__title">Hey, Space Explorer!</h1>
-            <p className="login__subtitle">Your next adventure starts right here.</p>
+            <div className="login__logo">LQ</div>
+            <h1 className="login__title">LEGACY IQ</h1>
+            <p className="login__subtitle">Autonomous Legacy Modernization Agent – Sign in to access workspace.</p>
 
             <div className="field">
               <label className="field__label" htmlFor="email">
@@ -80,7 +82,7 @@ export default function LoginPage() {
                   id="email"
                   className="field__input"
                   type="email"
-                  placeholder="john.deo@gmail.com"
+                  placeholder="architect@tcs.modernize.ai"
                   autoComplete="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -99,7 +101,7 @@ export default function LoginPage() {
                   id="password"
                   className="field__input"
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="johndeo@123"
+                  placeholder="••••••••••••"
                   autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -125,23 +127,23 @@ export default function LoginPage() {
                 />
                 Remember me
               </label>
-              <a className="login__forgot" href="#">
-                Forgot Password?
+              <a className="login__forgot" href="#" onClick={(e) => { e.preventDefault(); navigate('/'); }}>
+                Enter as Guest
               </a>
             </div>
 
             <button type="submit" className="btn btn--primary">
-              Launch Into Space <ArrowIcon />
+              Access Modernization Workspace <ArrowIcon />
             </button>
 
             <div className="divider">OR</div>
 
-            <button type="button" className="btn btn--outline">
-              <GoogleIcon /> Sign in with Google
+            <button type="button" className="btn btn--outline" onClick={() => navigate('/')}>
+              <GoogleIcon /> Sign in with Enterprise SSO
             </button>
 
             <p className="login__signup">
-              Don't have an account? <a href="#">Sign up</a>
+              TCS AI Engineering Hackathon 2026 Edition
             </p>
           </form>
         </section>

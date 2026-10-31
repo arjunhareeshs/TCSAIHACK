@@ -1,0 +1,11 @@
+review_discovery_task:
+  description: >
+    1. Inspect the file inventory using `find_files` and `list_tree` for project '{project_name}'.
+    2. Identify the main application entry points (e.g. main.py, index.ts, server startup files).
+    3. Verify that all key modules and layers (frontend, backend, database, infrastructure) are properly partitioned.
+    4. Save initial findings with `record_finding` and citations with `cite_code`.
+    5. Write the initial summary section into 'project_context' using `write_section`.
+  expected_output: >
+    A verified summary of project architecture, entry points, detected frameworks, and module boundaries,
+    stored in project_context.md with citations.
+  agent: discovery_reviewer

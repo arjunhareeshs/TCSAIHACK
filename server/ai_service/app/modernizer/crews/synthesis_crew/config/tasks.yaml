@@ -1,0 +1,30 @@
+synthesize_current_state_task:
+  description: >
+    1. Read all layer reports (frontend, backend, database, deployment, stack, operational) using `read_document`.
+    2. Synthesize `executive_summary.md`, `current_architecture.md`, `architecture_diagram.md`, and `technical_debt.md`.
+    3. Generate Mermaid architecture flowcharts representing system components and data flows.
+    4. Write sections using `write_section`.
+  expected_output: >
+    Complete current-state deliverables in final_analysis/ with diagrams and technical debt catalogue.
+  agent: current_state_architect
+
+synthesize_target_architecture_task:
+  description: >
+    1. Read business rules and research recommendations using `read_document`.
+    2. Formulate `target_architecture.md` detailing the cloud-native destination architecture and API contracts.
+    3. Construct `modernization_heatmap.md` scoring modules 1-5 across Criticality, Coupling, Risk, Debt, and Safety.
+    4. Detail migration options and trade-offs in `migration_options.md`.
+    5. Write sections using `write_section`.
+  expected_output: >
+    Complete target architecture, modernization heatmap, and migration options in final_analysis/.
+  agent: modernization_architect
+
+synthesize_roadmap_and_tests_task:
+  description: >
+    1. Formulate a realistic 5-phase migration roadmap in `migration_roadmap.md`.
+    2. Design the testing and regression strategy in `testing_and_regression_strategy.md`.
+    3. Ensure every protected business rule in the rule catalogue has an explicit characterization test plan.
+    4. Write sections using `write_section`.
+  expected_output: >
+    Complete migration roadmap and regression testing strategy in final_analysis/.
+  agent: roadmap_test_strategist

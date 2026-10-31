@@ -1,0 +1,26 @@
+[project]
+name = "legacy-modernization-ai-service"
+version = "1.0.0"
+description = "Autonomous Legacy Modernization Agent powered by CrewAI and deterministic facts"
+requires-python = ">=3.10"
+dependencies = [
+    "crewai>=1.15.0",
+    "crewai-cli>=1.15.0",
+    "langfuse>=5.1.0",
+    "fastapi>=0.110.0",
+    "uvicorn>=0.28.0",
+    "pydantic>=2.10.0",
+    "pydantic-settings>=2.0.0",
+    "httpx>=0.28.0",
+    "pyyaml>=6.0",
+    "python-dotenv>=1.0.0",
+    "rich>=13.0.0"
+]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.crewai]
+type = "flow"
+name = "modernization_flow"

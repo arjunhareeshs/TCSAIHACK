@@ -1,0 +1,64 @@
+investigate_frontend_task:
+  description: >
+    1. Read frontend entry points, router files, and API services using `find_files` and `read_file`.
+    2. Trace all API calls using `trace_request_flow` and map each API call to its target backend endpoint.
+    3. Document form validation logic, UI state handling, and error views.
+    4. Cite every finding using `cite_code` and record findings using `record_finding`.
+    5. Write the full analysis into 'frontend' using `write_section`.
+  expected_output: >
+    Comprehensive frontend.md analysis detailing framework version, components, routes, API client mappings,
+    and citations.
+  agent: frontend_specialist
+
+investigate_backend_task:
+  description: >
+    1. Find all API routes and entry points using `find_files`, `trace_request_flow`, and `read_file`.
+    2. Trace middleware, authentication flow, handler functions, and internal service calls.
+    3. Detect background workers, celery/task queues, or cron decorators using `get_dynamic_markers`.
+    4. Cite lines using `cite_code` and record findings using `record_finding`.
+    5. Write the complete analysis into 'backend' using `write_section`.
+  expected_output: >
+    Comprehensive backend.md analysis mapping endpoints, handlers, services, middleware, and citations.
+  agent: backend_specialist
+
+investigate_database_task:
+  description: >
+    1. Analyze schema definitions, migrations, and SQL files using `get_schema_objects` and `read_file`.
+    2. Map tables to code queries, ORM models, and detect orphaned tables or missing constraints.
+    3. Check triggers or stored procedures that enforce undocumented business rules.
+    4. Record citations using `cite_code` and findings using `record_finding`.
+    5. Write the complete analysis into 'database' using `write_section`.
+  expected_output: >
+    Comprehensive database.md document covering schema tables, constraints, triggers, relationships, and code usage.
+  agent: database_specialist
+
+investigate_deployment_task:
+  description: >
+    1. Inspect Dockerfiles, docker-compose.yml, k8s configs, and CI/CD pipelines using `read_file`.
+    2. Identify all deployable services, ports, volume mounts, and scheduled cron jobs.
+    3. Record citations with `cite_code` and findings with `record_finding`.
+    4. Write the complete analysis into 'deployment' using `write_section`.
+  expected_output: >
+    Comprehensive deployment.md documenting container configurations, build stages, and scheduled tasks.
+  agent: deployment_specialist
+
+investigate_stack_config_task:
+  description: >
+    1. Inspect all manifests (package.json, requirements.txt, pyproject.toml) using `read_file`.
+    2. Inspect environment variable usage and example files (.env.example).
+    3. Identify unpinned dependencies, outdated major versions, and configuration conflicts.
+    4. Record citations with `cite_code` and findings with `record_finding`.
+    5. Write the complete analysis into 'stack' using `write_section`.
+  expected_output: >
+    Comprehensive stack_configuration_environment_dependencies.md covering language versions, dependencies, and environment keys.
+  agent: stack_config_specialist
+
+investigate_operational_evidence_task:
+  description: >
+    1. Search production incidents, bug tickets, and docs using `search_operational_records`.
+    2. Link past outages and reported bug fixes to specific source files and components.
+    3. Record citations with `cite_code` and findings with `record_finding`.
+    4. Write the complete analysis into 'operational' using `write_section`.
+  expected_output: >
+    Comprehensive operational_evidence.md linking incidents to source components and fragile legacy areas.
+  agent: operational_evidence_specialist
